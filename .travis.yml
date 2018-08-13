@@ -1,0 +1,25 @@
+language: php
+php: '7.0'
+env:
+  global:
+    - "FTP_HOST=ftp://wp13226513.server-he.de/"
+
+addons:
+  ssh_known_hosts: $FTP_HOST
+  apt:
+    packages:
+    - lftp
+
+script:
+  - if [[ "$TRAVIS_BRANCH" == "master" ]];
+    then
+      lftp -c "open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; \
+      set ssl:verify-certificate no; \
+      mirror -R ./ /www/";
+    fi
+ 
+notifications:
+  email:
+    recipients: lukas.holzer@typeflow.cc
+    on_success: never
+    on_failure: always
